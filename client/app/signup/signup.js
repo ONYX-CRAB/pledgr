@@ -48,7 +48,6 @@ angular.module('pledgr.signup', [])
   };
 
   $scope.signup = function() {
-    console.log('checkout form in signup', $scope.checkoutForm);
     Auth.signup($scope.user)
     // .then(function(token) {
     //     $window.localStorage.setItem('token', token);
