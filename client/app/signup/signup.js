@@ -86,6 +86,7 @@ angular.module('pledgr.signup', [])
       }
     });
   };
+
 })
 
 .directive('converter', function(converters) {
@@ -102,7 +103,7 @@ angular.module('pledgr.signup', [])
 .value('converters', {
   y2w: {
     formatter: function(y) {
-      return y / 52;
+      return Math.ceil(y / 52);
     },
     parser: function(w) {
       return w * 52;
