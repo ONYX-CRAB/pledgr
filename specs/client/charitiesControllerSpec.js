@@ -1,4 +1,4 @@
-/*global beforeEach, describe, expect, inject, it */
+/*global beforeEach, afterEach, describe, expect, inject, it */
 
 describe('CharitiesController', function() {
   var $scope, $rootScope, createController, $httpBackend, $stateParams;
@@ -29,17 +29,20 @@ describe('CharitiesController', function() {
     };
   }));
 
-  // afterEach(function() {
-  //   $httpBackend.verifyNoOutstandingExpectation();
-  //   $httpBackend.verifyNoOutstandingRequest();
-  // });
+  afterEach(function() {
+    $httpBackend.flush();
+    $httpBackend.verifyNoOutstandingExpectation();
+    $httpBackend.verifyNoOutstandingRequest();
+  });
 
   it('should have an orgids property on the $scope', function() {
+    $httpBackend.whenGET(/\/api\/charity\/[0-9]+/).respond(200, 'good work');
     createController();
     expect($scope.orgids).to.be.an('array');
   });
 
   it('should have a makeChart method on the $scope', function() {
+    $httpBackend.whenGET(/\/api\/charity\/[0-9]+/).respond(200, 'good work');
     createController();
     expect($scope.makeChart).to.be.a('function');
   });
@@ -50,7 +53,6 @@ describe('CharitiesController', function() {
     $httpBackend.expectGET('/api/charity/' + c2).respond(c2);
     $httpBackend.expectGET('/api/charity/' + c3).respond(c3);
     createController();
-    $httpBackend.flush();
     expect($scope.orgids).to.eql(mockOrgids);
   });
 });

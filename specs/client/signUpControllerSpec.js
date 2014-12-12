@@ -1,4 +1,4 @@
-/*global beforeEach, describe, expect, inject, it */
+/*global beforeEach, afterEach, describe, expect, inject, it */
 
 describe('SignUpController', function() {
   var $scope, $rootScope, createController, $httpBackend, $stateParams, Auth, SMS;
@@ -25,6 +25,11 @@ describe('SignUpController', function() {
     };
   }));
 
+  afterEach(function() {
+    $httpBackend.verifyNoOutstandingExpectation();
+    $httpBackend.verifyNoOutstandingRequest();
+  });
+
   it('should have a user prop which is an object', function() {
     createController();
     expect($scope.user).to.be.an('object');
@@ -45,12 +50,15 @@ describe('SignUpController', function() {
     expect(Auth.signup).to.be.a('function');
   });
 
-  it('should hit the API correctly', function() {
+  it('should hit the signup API correctly', function() {
+    $httpBackend.expectPOST('/api/users/signup').respond(201, JSON.stringify({
+      data: {
+        token: 'token!'
+      }
+    }));
     createController();
     $scope.signup();
-    $httpBackend.expectPOST('/api/users/signup').respond(201);
-    $httpBackend.verifyNoOutstandingRequest();
-    $httpBackend.verifyNoOutstandingExpectation();
+    $httpBackend.flush();
 
   });
 
@@ -59,9 +67,33 @@ describe('SignUpController', function() {
     expect($scope.sendCode).to.be.a('function');
   });
 
+  it('should hit the send API correctly', function() {
+    $httpBackend.expectPOST('/api/sms/send').respond(201, JSON.stringify({
+      data: {
+        sent: 'sent!'
+      }
+    }));
+    createController();
+    $scope.sendCode();
+    $httpBackend.flush();
+
+  });
+
   it('should have a verifyCode function', function() {
     createController();
     expect($scope.verifyCode).to.be.a('function');
+  });
+
+  it('should hit the verify API correctly', function() {
+    $httpBackend.expectPOST('/api/sms/verify').respond(201, JSON.stringify({
+      data: {
+        found: 'found!'
+      }
+    }));
+    createController();
+    $scope.verifyCode();
+    $httpBackend.flush();
+
   });
 
 });

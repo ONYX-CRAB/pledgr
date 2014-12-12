@@ -21,6 +21,7 @@ module.exports = function(config) {
       '../client/bower_components/angular-ui-router/release/angular-ui-router.js',
       '../client/bower_components/angular-payments/lib/angular-payments.js',
       'https://js.stripe.com/v2/',
+      '../client/bower_components/jquery/dist/jquery.js',
 
       '../client/app/**/*.js',
 
