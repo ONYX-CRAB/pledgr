@@ -4,35 +4,15 @@ angular.module('pledgr.signup', [])
 //     $window.Stripe.setPublishableKey('pk_test_3Fzz9YSECJXQuhTlWhLzcj6P');
 // })
 
-.controller('SignupController', function($scope, $window, Auth, SMS) {
+.controller('SignupController', function($scope, $window, $state, Auth, SMS) {
 
   // sets your application publishable key
   $window.Stripe.setPublishableKey('pk_test_3Fzz9YSECJXQuhTlWhLzcj6P');
 
-  $scope.user = {
-    first:'First Name',
-    last:'Last Name',
-    username: 'username@example.com',
-    password: '',
-    male: false,
-    female: false,
-    animals: false,
-    arts: false,
-    education: false,
-    environment: false,
-    health: false,
-    humanService: false,
-    international: false,
-    publicBenefit: false,
-    religion: false,
-    local: false,
-    phone: '(111)111-1111',
-    code:'test',
-    pledge: 100.00,
-  };
+  $scope.user = Auth.userInfo;
 
  // sends credit card info to Stripe and returns with token
-  $scope.getToken = function() {
+  $scope.getStripeToken = function() {
     var Cardinfo = {
       number : $scope.number,
       //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
@@ -48,11 +28,15 @@ angular.module('pledgr.signup', [])
   };
 
   $scope.signup = function() {
-    Auth.signup($scope.user)
+    Auth.signup(Auth.userInfo)
     // .then(function(token) {
     //     $window.localStorage.setItem('token', token);
     //     // $location.path('/userhome');
     //   })
+      .then(function() {
+        Auth.userInfo = $scope.user;
+        $state.go('profile');
+      })
       .catch(function(error) {
         console.error(error);
       });
@@ -86,7 +70,6 @@ angular.module('pledgr.signup', [])
       }
     });
   };
-
 })
 
 .directive('converter', function(converters) {

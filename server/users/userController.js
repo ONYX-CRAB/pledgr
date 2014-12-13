@@ -2,6 +2,7 @@ var User = require('./userModel');
 var Q = require('q');
 var jwt  = require('jwt-simple');
 var sendText = require('../sms/sendDonationText');
+var Donations = require('../sms/sentMessagesModel').Donations;
 var stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 module.exports = {
@@ -73,7 +74,6 @@ module.exports = {
       .then(function(user) {
         // create token to send back for auth
         var token = jwt.encode(user, 'secret');
-//        console.log('token is:', token);
         res.status(201);
         res.json({ token: token });
         return Q.fcall(function() {
@@ -87,30 +87,53 @@ module.exports = {
       .fail(function(error) {
         next(error);
       });
-  }
+  },
 
-  // checkAuth: function (req, res, next) {
-  //   // checking to see if the user is authenticated
-  //   // grab the token in the header is any
-  //   // then decode the token, which we end up being the user object
-  //   // check to see if that user exists in the database
-  //   var token = req.headers['x-access-token'];
-  //   if (!token) {
-  //     next(new Error('No token'));
-  //   } else {
-  //     var user = jwt.decode(token, 'secret');
-  //     var findUser = Q.nbind(User.findOne, User);
-  //     findUser({username: user.username})
-  //       .then(function (foundUser) {
-  //         if (foundUser) {
-  //           res.send(200);
-  //         } else {
-  //           res.send(401);
-  //         }
-  //       })
-  //       .fail(function (error) {
-  //         next(error);
-  //       });
-  //   }
-  // }
+  checkAuth: function(req, res, next) {
+    // checking to see if the user is authenticated
+    // grab the token in the header is any
+    // then decode the token, which we end up being the user object
+    // check to see if that user exists in the database
+    console.log('request from isAuthenticated is:', req);
+    var token = req.headers['x-access-token'];
+    if (!token) {
+      next(new Error('No token'));
+    } else {
+      var user = jwt.decode(token, 'secret');
+      var findUser = Q.nbind(User.findOne, User);
+      findUser({ username: user.username })
+        .then(function(foundUser) {
+          if (foundUser) {
+            res.send(200);
+          } else {
+            res.send(401);
+          }
+        })
+        .fail(function(error) {
+          next(error);
+        });
+    }
+  },
+
+  getProfile: function(req, res, next) {
+    // fetch donations from donations collection using user's phone number from req token
+    var token = req.headers['x-access-token'];
+    if (!token) {
+      next(new Error('No Token'));
+    } else {
+      var user = jwt.decode(token, 'secret');
+      var fetchDonations = Q.nbind(Donations.find, Donations);
+      console.log('user in get profile', user);
+      fetchDonations({ phone: user.phone })
+        .then(function(donations) {
+          if (donations) {
+            console.log('we have donations', donations);
+            res.json(donations);
+          } else {
+            res.status(401);
+            res.send('you done fucked up');
+          }
+        });
+    }
+  }
 };

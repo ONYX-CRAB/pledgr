@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+// var Charity = require('../charity/charityModel');
 
 // New schema for sms messages sent to users
 var SentMessagesSchema = new mongoose.Schema({
@@ -32,8 +33,12 @@ var DonationsSchema = new mongoose.Schema({
     required: true
   },
   charity: {
+    type: Number,
+    ref: 'Charity'
+  },
+  charityName: {
     type: String,
-    required: true
+    ref: 'Charity'
   },
   amount: {
     type: Number,

@@ -39,7 +39,9 @@ module.exports = {
       // Query the user choices collection with the phone number that sent the response
       SmsModel.SentMessages.findOne({ phone: userPhone }, function(err, sms) {
         if (err) {return console.error(err);}
+        console.log(sms);
         if (sms[userChoice]) {
+          // var chosenCharityName = sms[userChoice];
           var chosenCharityId = sms[userChoice];
           // Query the User collection to find out how much they want to donate
           UserModel.findOne({ phone: sms.phone }, function(err, user) {
@@ -49,6 +51,7 @@ module.exports = {
             // Create a new donation in the donations collection
             var donation = new SmsModel.Donations({
               phone: user.phone,
+              // charityName: chosenCharityName,
               charity: chosenCharityId,
               amount: donationAmount
             });
@@ -56,9 +59,10 @@ module.exports = {
             donation.save(function(err) {
               if (err) { throw err; }
               else {
-                chosenCharityId = parseInt(chosenCharityId);
+                // chosenCharityId = parseInt(chosenCharityId);
                 // send thank you w/ charity name back to user
                 CharityModel.findOne({ orgid: chosenCharityId }, function(err, charity) {
+                // CharityModel.findOne({ name: chosenCharityName }, function(err, charity) {
                   client.sendMessage({
                     to: '+1' + userPhone,
                     from: fromPhone,

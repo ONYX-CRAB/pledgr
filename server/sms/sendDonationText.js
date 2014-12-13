@@ -87,9 +87,9 @@ var prepareMessageBody = function(users, charities, next) {
 
     var messageContent = {
       phone: users[i].phone,
-      choice1: choice1.orgid,
-      choice2: choice2.orgid,
-      choice3: choice3.orgid,
+      choice1: choice1.name,
+      choice2: choice2.name,
+      choice3: choice3.name,
       messageBody: messageBody
     };
 
