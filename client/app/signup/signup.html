@@ -107,9 +107,9 @@
         </div>
         <!-- <p ng-show="signupForm.pledge.$invalid || signupForm.pledge.$pristine">Please enter amount</p> -->
         <label for="pledge">Pledge Per Year: $</label>
-        <input type="number" ng-model="user.pledge" name="pledge" required><br />
+        <input type="number" ng-model="user.pledge" name="pledge" min="0" required><br />
         <label for="pledge">Pledge Per Week: $</label>
-        <input type="number" ng-model="user.pledge" converter="y2w"><br />
+        <input type="number" ng-model="user.pledge" converter="y2w" min="0"><br />
         <!-- create account submit button-->
         <p>Click <strong>Create account</strong> to sign up today!</p>
         <button type="submit" ng-disabled='signupForm.$invalid' class="btn btn-primary">Create account</button>
