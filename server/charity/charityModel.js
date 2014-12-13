@@ -1,7 +1,10 @@
 var mongoose = require('mongoose');
 
 var CharitySchema = new mongoose.Schema({
-  orgid: Number,
+  orgid: {
+    type: Number,
+    unique: true
+  },
   name: String,
   city: String,
   state: String,
